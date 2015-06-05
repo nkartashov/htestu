@@ -23,6 +23,7 @@ makeTestUGenerator g = do
   marshalledName <- newCString generatorName
   c_createGenerator marshalledName callback
 
+-- TODO: free when not needed
 wrappedGenToCallback :: RandomGen g => g -> IO (FunPtr (IO CUInt))
 wrappedGenToCallback = mkCallback . (fmap intToCUInt) . wrapForPassing intStreamFromRandomGen
 
