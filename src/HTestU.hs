@@ -12,7 +12,8 @@ import HTestU.Wrapping
 
 data UniformGenerator
 foreign import ccall safe "unif01_CreateExternGenBits" c_createGenerator :: CString -> FunPtr (IO CUInt) -> IO (Ptr UniformGenerator)
-foreign import ccall "wrapper" mkCallback :: IO CUInt -> IO (FunPtr (IO CUInt))
+foreign import ccall safe "unif01_DeleteExternGenBits" c_deleteGenerator :: Ptr UniformGenerator -> IO ()
+foreign import ccall safe "wrapper" mkCallback :: IO CUInt -> IO (FunPtr (IO CUInt))
 
 generatorName = "supplied_generator"
 
@@ -23,7 +24,7 @@ makeTestUGenerator g = do
   c_createGenerator marshalledName callback
 
 wrappedGenToCallback :: RandomGen g => g -> IO (FunPtr (IO CUInt))
-wrappedGenToCallback = mkCallback . (fmap intToCUInt) . wrapForPassing
+wrappedGenToCallback = mkCallback . (fmap intToCUInt) . wrapForPassing intStreamFromRandomGen
 
 intToCUInt :: Int -> CUInt
 intToCUInt = CUInt . fromIntegral
@@ -34,3 +35,4 @@ runSmallCrush :: RandomGen g => g -> IO ()
 runSmallCrush g = do
   testUGenerator <- makeTestUGenerator g
   c_runSmallCrush testUGenerator
+  c_deleteGenerator testUGenerator
