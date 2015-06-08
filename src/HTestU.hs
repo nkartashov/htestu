@@ -1,8 +1,11 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE Rank2Types #-}
 
-module HTestU where
-
+module HTestU
+ (runCrush,
+ c_smallCrush,
+ c_crush,
+ c_bigCrush) where
 import System.Random (RandomGen)
 
 import Foreign.C.String (CString, newCString)
