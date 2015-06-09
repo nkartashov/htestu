@@ -16,7 +16,7 @@ import HTestU.Wrapping (wrapForPassing)
 import HTestU.Streaming (RandomStream)
 
 data UniformGenerator
-type CrushResult = IO ()
+type CrushResult = IO (Ptr ())
 type CrushFunction = Ptr UniformGenerator -> CrushResult
 
 foreign import ccall safe "unif01_CreateExternGenBits" c_createGenerator :: CString -> FunPtr (IO CUInt) -> IO (Ptr UniformGenerator)

@@ -85,7 +85,7 @@ extern char *bbattery_TestNames[];
 
 \code
 
-void bbattery_SmallCrush (unif01_Gen *gen);
+double* bbattery_SmallCrush (unif01_Gen *gen);
 
 void bbattery_SmallCrushFile (char *filename);
 \endcode
@@ -159,7 +159,7 @@ void bbattery_RepeatSmallCrush (unif01_Gen *gen, int rep[]);
 \code
 
 
-void bbattery_Crush (unif01_Gen *gen);
+double* bbattery_Crush (unif01_Gen *gen);
 \endcode
   \tab
   Applies the battery {\tt Crush}, a suite of stringent statistical
@@ -451,7 +451,7 @@ void bbattery_RepeatCrush (unif01_Gen *gen, int rep[]);
 \code
 
 
-void bbattery_BigCrush (unif01_Gen *gen);
+double* bbattery_BigCrush (unif01_Gen *gen);
 \endcode
   \tab
   Applies the battery {\tt BigCrush}, a suite of very stringent statistical

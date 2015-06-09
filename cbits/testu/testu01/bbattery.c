@@ -409,7 +409,7 @@ static void InitBat (void)
 
 /*=========================================================================*/
 
-static void SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
+static double* SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
 /*
  * A small battery of statistical tests for Random Number Generators 
  * used in simulation.
@@ -417,6 +417,7 @@ static void SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
  * values are Rep[i] = 1 for all i.
  */
 {
+   swrite_Basic = 0;
    const int r = 0;
    int i;
    int j = -1;
@@ -567,28 +568,20 @@ static void SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
    swalk_DeleteRes (res4);
 
    bbattery_NTests = ++j;
-   if (fileFlag) {
-      WriteReport (filename, "SmallCrush", bbattery_NTests, bbattery_pVal,
-         Timer, TRUE, TRUE, 0.0);
-      ufile_DeleteReadBin (gen);
-   } else {
-      GetName (gen, genName);
-      WriteReport (genName, "SmallCrush", bbattery_NTests, bbattery_pVal,
-         Timer, FALSE, TRUE, 0.0);
-   }
    chrono_Delete (Timer);
+   return bbattery_pVal;
 }
 
 
 /*=========================================================================*/
 
-void bbattery_SmallCrush (unif01_Gen * gen)
+double* bbattery_SmallCrush (unif01_Gen * gen)
 {
    int i;
    int Rep[1 + NDIM] = {0};
    for (i = 1; i <= SMALLCRUSH_NUM; ++i)
       Rep[i] = 1;
-   SmallCrush (gen, NULL, Rep);
+   return SmallCrush (gen, NULL, Rep);
 }
 
 
@@ -614,7 +607,7 @@ void bbattery_RepeatSmallCrush (unif01_Gen * gen, int Rep[])
 
 /*=========================================================================*/
 
-static void Crush (unif01_Gen * gen, int Rep[])
+static double* Crush (unif01_Gen * gen, int Rep[])
 /*
  * A battery of stringent statistical tests for Random Number Generators
  * used in simulation.
@@ -622,6 +615,7 @@ static void Crush (unif01_Gen * gen, int Rep[])
  * values are Rep[i] = 1 for all i.
  */
 {
+   swrite_Basic = 0;
    const int s = 30;
    const int r = 0;
    int i;
@@ -1592,21 +1586,20 @@ static void Crush (unif01_Gen * gen, int Rep[])
 
    bbattery_NTests = ++j;
    GetName (gen, genName);
-   WriteReport (genName, "Crush", bbattery_NTests,
-      bbattery_pVal, Timer, FALSE, TRUE, 0.0);
    chrono_Delete (Timer);
+   return bbattery_pVal;
 }
 
 
 /*=========================================================================*/
 
-void bbattery_Crush (unif01_Gen * gen)
+double* bbattery_Crush (unif01_Gen * gen)
 {
    int i;
    int Rep[NDIM + 1] = {0};
    for (i = 1; i <= CRUSH_NUM; ++i)
       Rep[i] = 1;
-   Crush (gen, Rep);
+   return Crush (gen, Rep);
 }
 
 
@@ -1620,7 +1613,7 @@ void bbattery_RepeatCrush (unif01_Gen * gen, int Rep[])
 
 /*=========================================================================*/
 
-static void BigCrush (unif01_Gen * gen, int Rep[])
+static double* BigCrush (unif01_Gen * gen, int Rep[])
 /*
  * A battery of very stringent statistical tests for Random Number Generators
  * used in simulation.
@@ -1628,6 +1621,7 @@ static void BigCrush (unif01_Gen * gen, int Rep[])
  * values are Rep[i] = 1 for all i.
  */
 {
+   swrite_Basic = 0;
    const int s = 30;
    const int r = 0;
    int i;
@@ -2685,21 +2679,20 @@ static void BigCrush (unif01_Gen * gen, int Rep[])
 
    bbattery_NTests = ++j;
    GetName (gen, genName);
-   WriteReport (genName, "BigCrush", bbattery_NTests, bbattery_pVal,
-      Timer, FALSE, TRUE, 0.0);
    chrono_Delete (Timer);
+   return bbattery_pVal;
 }
 
 
 /*=========================================================================*/
 
-void bbattery_BigCrush (unif01_Gen * gen)
+double* bbattery_BigCrush (unif01_Gen * gen)
 {
    int i;
    int Rep[NDIM + 1] = {0};
    for (i = 1; i <= BIGCRUSH_NUM; ++i)
       Rep[i] = 1;
-   BigCrush (gen, Rep);
+   return BigCrush (gen, Rep);
 }
 
 
