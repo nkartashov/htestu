@@ -409,7 +409,7 @@ static void InitBat (void)
 
 /*=========================================================================*/
 
-static double* SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
+static BatteryResult* SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
 /*
  * A small battery of statistical tests for Random Number Generators 
  * used in simulation.
@@ -569,13 +569,13 @@ static double* SmallCrush (unif01_Gen * gen, char *filename, int Rep[])
 
    bbattery_NTests = ++j;
    chrono_Delete (Timer);
-   return bbattery_pVal;
+   return wrap(bbattery_pVal, bbattery_NTests);
 }
 
 
 /*=========================================================================*/
 
-double* bbattery_SmallCrush (unif01_Gen * gen)
+BatteryResult* bbattery_SmallCrush (unif01_Gen * gen)
 {
    int i;
    int Rep[1 + NDIM] = {0};
@@ -607,7 +607,7 @@ void bbattery_RepeatSmallCrush (unif01_Gen * gen, int Rep[])
 
 /*=========================================================================*/
 
-static double* Crush (unif01_Gen * gen, int Rep[])
+static BatteryResult* Crush (unif01_Gen * gen, int Rep[])
 /*
  * A battery of stringent statistical tests for Random Number Generators
  * used in simulation.
@@ -1587,13 +1587,13 @@ static double* Crush (unif01_Gen * gen, int Rep[])
    bbattery_NTests = ++j;
    GetName (gen, genName);
    chrono_Delete (Timer);
-   return bbattery_pVal;
+   return wrap(bbattery_pVal, bbattery_NTests);
 }
 
 
 /*=========================================================================*/
 
-double* bbattery_Crush (unif01_Gen * gen)
+BatteryResult* bbattery_Crush (unif01_Gen * gen)
 {
    int i;
    int Rep[NDIM + 1] = {0};
@@ -1613,7 +1613,7 @@ void bbattery_RepeatCrush (unif01_Gen * gen, int Rep[])
 
 /*=========================================================================*/
 
-static double* BigCrush (unif01_Gen * gen, int Rep[])
+static BatteryResult* BigCrush (unif01_Gen * gen, int Rep[])
 /*
  * A battery of very stringent statistical tests for Random Number Generators
  * used in simulation.
@@ -2680,13 +2680,13 @@ static double* BigCrush (unif01_Gen * gen, int Rep[])
    bbattery_NTests = ++j;
    GetName (gen, genName);
    chrono_Delete (Timer);
-   return bbattery_pVal;
+   return wrap(bbattery_pVal, bbattery_NTests);
 }
 
 
 /*=========================================================================*/
 
-double* bbattery_BigCrush (unif01_Gen * gen)
+BatteryResult* bbattery_BigCrush (unif01_Gen * gen)
 {
    int i;
    int Rep[NDIM + 1] = {0};
@@ -3819,7 +3819,7 @@ void bbattery_RepeatRabbit (unif01_Gen * gen, double nb, int Rep[])
 
 /*=========================================================================*/
 
-void bbattery_pseudoDIEHARD (unif01_Gen * gen)
+BatteryResult* bbattery_pseudoDIEHARD (unif01_Gen * gen)
 /*
  * As close as possible to the DIEHARD test suite.
  */
@@ -3835,6 +3835,7 @@ void bbattery_pseudoDIEHARD (unif01_Gen * gen)
    double NumExp[7] = {
       67.668, 135.335, 135.335, 90.224, 45.112, 18.045, 8.282
    };
+   swrite_Basic = 0;
 
    Timer = chrono_Create ();
    InitBat ();
@@ -3991,9 +3992,8 @@ void bbattery_pseudoDIEHARD (unif01_Gen * gen)
 
    bbattery_NTests = ++j;
    GetName (gen, genName);
-   WriteReport (genName, "pseudoDIEHARD", bbattery_NTests, bbattery_pVal,
-      Timer, FALSE, FALSE, 0.0);
    chrono_Delete (Timer);
+   return wrap(bbattery_pVal, bbattery_NTests);
 }
 
 

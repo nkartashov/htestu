@@ -53,6 +53,21 @@ extern int bbattery_NTests;
   its $p$-value, so {\tt bbattery\_NTests} will usually be larger than
   the number of tests in the battery.
   \endtab
+
+  \code
+  typedef struct BatteryResults {
+    double* pValues;
+    int testNumber;
+  } BatteryResult;
+
+  BatteryResult* wrap(double* pValues, int testNumber) {
+    BatteryResult* result = (BatteryResult*) malloc(sizeof(BatteryResult));
+    result->pValues = pValues;
+    result->testNumber = testNumber;
+    return result;
+  }
+\endcode
+
 \code
 
 
@@ -85,7 +100,7 @@ extern char *bbattery_TestNames[];
 
 \code
 
-double* bbattery_SmallCrush (unif01_Gen *gen);
+BatteryResult* bbattery_SmallCrush (unif01_Gen *gen);
 
 void bbattery_SmallCrushFile (char *filename);
 \endcode
@@ -159,7 +174,7 @@ void bbattery_RepeatSmallCrush (unif01_Gen *gen, int rep[]);
 \code
 
 
-double* bbattery_Crush (unif01_Gen *gen);
+BatteryResult* bbattery_Crush (unif01_Gen *gen);
 \endcode
   \tab
   Applies the battery {\tt Crush}, a suite of stringent statistical
@@ -451,7 +466,7 @@ void bbattery_RepeatCrush (unif01_Gen *gen, int rep[]);
 \code
 
 
-double* bbattery_BigCrush (unif01_Gen *gen);
+BatteryResult* bbattery_BigCrush (unif01_Gen *gen);
 \endcode
   \tab
   Applies the battery {\tt BigCrush}, a suite of very stringent statistical
@@ -940,7 +955,7 @@ void bbattery_RepeatBlockAlphabit (unif01_Gen *gen, double nb, int r, int s,
 \code
 
 
-void bbattery_pseudoDIEHARD (unif01_Gen *gen);
+BatteryResult* bbattery_pseudoDIEHARD (unif01_Gen *gen);
 \endcode
   \tab
  \index{DIEHARD}\index{battery of tests!PseudoDIEHARD}%
