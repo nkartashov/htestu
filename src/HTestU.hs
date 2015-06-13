@@ -27,17 +27,21 @@ type BatteryResult = IO (Ptr BatteryResultStruct)
 type Battery = Ptr UniformGenerator -> BatteryResult
 data TestResult = Fail | Suspect | OK deriving (Eq, Show)
 
+type WrappedCallback = FunPtr (IO CUInt)
+
 foreign import ccall safe "unif01_CreateExternGenBits" c_createGenerator :: CString -> FunPtr (IO CUInt) -> IO (Ptr UniformGenerator)
 foreign import ccall safe "unif01_DeleteExternGenBits" c_deleteGenerator :: Ptr UniformGenerator -> IO ()
-foreign import ccall safe "wrapper" mkCallback :: IO CUInt -> IO (FunPtr (IO CUInt))
+foreign import ccall safe "wrapper" mkCallback :: IO CUInt -> IO WrappedCallback
 
 defaultGeneratorName = "supplied_generator"
 
 intToCUInt :: Int -> CUInt
 intToCUInt = CUInt . fromIntegral
 
-genToCallback :: RandomGen g => (g -> RandomStream) -> g -> IO (FunPtr (IO CUInt))
-genToCallback streamer = mkCallback . (fmap intToCUInt) . wrapForPassing streamer
+genToCallback :: RandomGen g => (g -> RandomStream) -> g -> IO WrappedCallback
+genToCallback streamer gen = do
+  wrappedGen <- wrapForPassing streamer gen
+  mkCallback $ fmap intToCUInt wrappedGen
 
 failurePvalue = 0.0000000001 -- 10^(-10)
 suspectPvalue = 0.001 -- 10^(-3)

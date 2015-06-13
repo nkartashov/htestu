@@ -10,9 +10,9 @@ import HTestU.Streaming (RandomStream)
 
 type WrappedGen = IO Int
 
-wrapForPassing :: RandomGen g => (g -> RandomStream) -> g  -> WrappedGen
-wrapForPassing streamer gen = nextIntFromStreamRef newIntStreamGen
-  where newIntStreamGen = unsafePerformIO $ newIORef $ streamer gen
+wrapForPassing :: RandomGen g => (g -> RandomStream) -> g  -> IO WrappedGen
+wrapForPassing streamer gen = newIntStreamGen >>= return . nextIntFromStreamRef
+  where newIntStreamGen = newIORef $ streamer gen
 
 nextIntFromStreamRef :: IORef RandomStream -> WrappedGen
 nextIntFromStreamRef streamRef = do
