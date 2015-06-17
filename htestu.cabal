@@ -18,7 +18,8 @@ cabal-version:       >=1.10
 library
   exposed-modules: HTestU,
                    HTestU.Streaming
-  other-modules:   HTestU.BatteryResult
+  other-modules:   HTestU.BatteryResult,
+                   HTestU.Wrapping
   -- other-extensions:    
   build-depends:       base >=4.7 && < 4.8,
                        random,
