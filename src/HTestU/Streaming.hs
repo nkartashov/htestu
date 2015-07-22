@@ -4,12 +4,16 @@ module HTestU.Streaming
  splitNextStreamFromGen) where
 
 import System.Random (RandomGen, next, split)
+import Data.List (iterate)
 
 type RandomStream = [Int]
 
 nextStreamFromGen :: RandomGen g => g -> RandomStream
-nextStreamFromGen gen = newInt : nextStreamFromGen newGen
-  where (newInt, newGen) = next gen
+nextStreamFromGen gen = map fst $ iterate wrappedNext firstStreamElement
+  where firstStreamElement = next gen
+
+wrappedNext :: RandomGen g => (Int, g) -> (Int, g)
+wrappedNext (_, newGen) = next newGen
 
 splitNextStreamFromGen :: RandomGen g => g -> RandomStream
 splitNextStreamFromGen gen = intertwineStreams (nextStreamFromGen leftGen) $ nextStreamFromGen rightGen
