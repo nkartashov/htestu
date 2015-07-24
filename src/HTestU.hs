@@ -3,10 +3,14 @@
 module HTestU
 ( TestResult,
   runBattery,
+  toResults,
   runBatteryToResults,
+  runBatteryOnStream,
+  runBatteryOnCallback,
   c_smallCrush,
   c_crush,
-  c_bigCrush) where
+  c_bigCrush,
+  c_pseudoDIEHARD) where
 import System.Random (RandomGen)
 
 import Foreign.C.String (CString, newCString)
@@ -52,8 +56,11 @@ pValueToResult pvalue | pvalue < failurePvalue || pvalue > 1.0 - failurePvalue =
                       | pvalue < suspectPvalue || pvalue > 1.0 - suspectPvalue = Suspect
                       | otherwise = OK
 
+toResults :: [Double] -> [TestResult]
+toResults = map pValueToResult
+
 runBatteryToResults :: RandomGen g => (g -> RandomStream) -> g -> Battery -> [TestResult]
-runBatteryToResults = ((map pValueToResult .) .) . runBattery
+runBatteryToResults = ((toResults .) .) . runBattery
 
 -- returns [Double] instead of IO [Double], because it is transparent (for the same gen result should be the same)
 runBattery :: RandomGen g => (g -> RandomStream) -> g -> Battery -> [Double]
