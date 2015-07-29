@@ -1,4 +1,4 @@
-module HTestU.Wrapping
+module Test.HTestU.Wrapping
   (WrappedGen,
   wrapForPassing) where
 
@@ -6,7 +6,7 @@ import System.Random (RandomGen)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
 import System.IO.Unsafe (unsafePerformIO)
 
-import HTestU.Streaming (RandomStream)
+import Test.HTestU.Streaming (RandomStream)
 
 type WrappedGen = IO Int
 

@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
-module HTestU
+module Test.HTestU
 ( TestResult,
   runBattery,
   toResults,
@@ -22,9 +22,9 @@ import Foreign.Storable
 
 import System.IO.Unsafe (unsafePerformIO)
 
-import HTestU.Wrapping (WrappedGen, wrapForPassing)
-import HTestU.Streaming (RandomStream)
-import HTestU.BatteryResult (BatteryResultStruct(..))
+import Test.HTestU.Wrapping (WrappedGen, wrapForPassing)
+import Test.HTestU.Streaming (RandomStream)
+import Test.HTestU.BatteryResult (BatteryResultStruct(..))
 
 data UniformGenerator
 type BatteryResult = IO (Ptr BatteryResultStruct)

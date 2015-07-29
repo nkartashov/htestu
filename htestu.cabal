@@ -17,10 +17,10 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     HTestU,
-                       HTestU.Streaming
-  other-modules:       HTestU.BatteryResult,
-                       HTestU.Wrapping
+  exposed-modules:     Test.HTestU,
+                       Test.HTestU.Streaming
+  other-modules:       Test.HTestU.BatteryResult,
+                       Test.HTestU.Wrapping
   other-extensions:    ForeignFunctionInterface, CPP
   build-depends:       base >=4.7 && < 4.8,
                        random
