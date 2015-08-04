@@ -1244,9 +1244,13 @@ static unsigned int get_next_value (void* param, void* state) {
   return ((unsigned int*) state)[index];
 }
 
+static void produce_new_batch(void* state) {
+    externGen_Bits (RANDOM_BATCH_SIZE, state);
+}
+
 static unsigned int generate_next_bits (void* param, void* state) {
   if (has_run_out_of_randoms(param)) {
-    externGen_Bits (RANDOM_BATCH_SIZE, state);
+    produce_new_batch(state);
     reset_param(param);
   }
   return get_next_value(param, state);
@@ -1277,11 +1281,12 @@ unif01_Gen* unif01_CreateExternGenBits (void (*f_Bits)(const unsigned int,
    gen = util_Malloc (sizeof (unif01_Gen));
    gen->state = util_Malloc (sizeof (unsigned int) * RANDOM_BATCH_SIZE);
    gen->param = util_Malloc (sizeof (unsigned int));
-   reset_param(gen->param);
    gen->Write = WrExternGen;
    externGen_Bits = f_Bits;
    gen->GetU01 = GB_U01;
    gen->GetBits = GB_Bits;
+   produce_new_batch(gen->state);
+   reset_param(gen->param);
 
    gen->name = util_Calloc (1, sizeof (char));
    gen->name[0] = '\0';

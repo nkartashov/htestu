@@ -25,7 +25,7 @@ type Battery = Ptr UniformGenerator -> BatteryResult
 type Callback = CUInt -> Ptr CUInt -> IO ()
 type WrappedCallback = FunPtr Callback
 
-foreign import ccall unsafe "unif01_CreateExternGenBits" c_createGenerator :: WrappedCallback -> IO (Ptr UniformGenerator)
+foreign import ccall safe "unif01_CreateExternGenBits" c_createGenerator :: WrappedCallback -> IO (Ptr UniformGenerator)
 foreign import ccall unsafe "unif01_DeleteExternGenBits" c_deleteGenerator :: Ptr UniformGenerator -> IO ()
 foreign import ccall unsafe "wrapper" mkCallback :: Callback -> IO WrappedCallback
 
