@@ -115,12 +115,12 @@ unsigned long unif01_StripB (unif01_Gen *gen, int r, int s)
 
 /* Dummy generator, always return 0.  */
 
-static double DummyGen_U01 (void *junk1, void *junk2)
+static double DummyGen_U01 (void *param, void *state)
 {
    return 0.0;
 }
 
-static unsigned long DummyGen_Bits (void *junk1, void *junk2)
+static unsigned long DummyGen_Bits (void *param, void *state)
 {
    return 0;
 }
@@ -1151,19 +1151,19 @@ static double (*externGen_U01)(void);  /* The external generator U01 */
 static int coGU = 0;                       /* Counter for GU_U01 */
 
 
-static double GU_U01 (void *junk1, void *junk2)
+static double GU_U01 (void *param, void *state)
 {
    return externGen_U01 ();
 }
 
 
-static unsigned long GU_Bits (void *junk1, void *junk2)
+static unsigned long GU_Bits (void *param, void *state)
 {
    return (unsigned long) (externGen_U01 () * unif01_NORM32);
 }
 
 
-static void WrExternGen (void *junk2)
+static void WrExternGen (void *state)
 {
 }
 
@@ -1208,23 +1208,65 @@ void unif01_DeleteExternGen01 (unif01_Gen * gen)
 
 /*=========================================================================*/
 
-static unsigned int (*externGen_Bits)(void);
+static void (*externGen_Bits)(const unsigned int, unsigned int*);
 static int coGB = 0;                        /* Counter for GB_U01 */
 
-static double GB_U01 (void *junk1, void *junk2)
-{
-   return externGen_Bits () / unif01_NORM32;
+static const int RANDOM_BATCH_SIZE = 1000;
+
+static void set_param (void* param, unsigned int value) {
+  *((unsigned int*) param) = value;
+}
+
+static unsigned int get_param(void* param) {
+  return *((unsigned int*) param);
+}
+
+static void reset_param (void* param) {
+  set_param(param, 0);
+}
+
+static void increment_param (void* param) {
+  set_param(param, get_param(param) + 1);
+}
+
+static int has_run_out_of_randoms (void* param) {
+  return get_param(param) == RANDOM_BATCH_SIZE;
+}
+
+static unsigned int next_param_increment (void* param) {
+  unsigned int result = get_param(param);
+  increment_param(param);
+  return result;
+}
+
+static unsigned int get_next_value (void* param, void* state) {
+  unsigned int index = next_param_increment(param);
+  return ((unsigned int*) state)[index];
+}
+
+static unsigned int generate_next_bits (void* param, void* state) {
+  if (has_run_out_of_randoms(param)) {
+    externGen_Bits (RANDOM_BATCH_SIZE, state);
+    reset_param(param);
+  }
+  return get_next_value(param, state);
 }
 
 
-static unsigned long GB_Bits (void *junk1, void *junk2)
+static double GB_U01 (void *param, void *state)
 {
-   return externGen_Bits ();
+  return generate_next_bits(param, state) / unif01_NORM32;
 }
 
 
-unif01_Gen *unif01_CreateExternGenBits (char *name,
-    unsigned int (*f_Bits)(void))
+static unsigned long GB_Bits (void *param, void *state)
+{
+  return generate_next_bits(param, state);
+}
+
+
+unif01_Gen* unif01_CreateExternGenBits (void (*f_Bits)(const unsigned int,
+                                                       unsigned int*))
 {
    unif01_Gen *gen;
    size_t leng;
@@ -1233,21 +1275,16 @@ unif01_Gen *unif01_CreateExternGenBits (char *name,
       "unif01_CreateExternGenBits:   only 1 such generator can be in use");
    coGB++;
    gen = util_Malloc (sizeof (unif01_Gen));
-   gen->state = NULL;
-   gen->param = NULL;
+   gen->state = util_Malloc (sizeof (unsigned int) * RANDOM_BATCH_SIZE);
+   gen->param = util_Malloc (sizeof (unsigned int));
+   reset_param(gen->param);
    gen->Write = WrExternGen;
    externGen_Bits = f_Bits;
    gen->GetU01 = GB_U01;
    gen->GetBits = GB_Bits;
 
-   if (name) {
-      leng = strlen (name);
-      gen->name = util_Calloc (leng + 2, sizeof (char));
-      strncpy (gen->name, name, leng);
-   } else {
-      gen->name = util_Calloc (1, sizeof (char));
-      gen->name[0] = '\0';
-   }
+   gen->name = util_Calloc (1, sizeof (char));
+   gen->name[0] = '\0';
    return gen;
 }
 
@@ -1257,6 +1294,8 @@ void unif01_DeleteExternGenBits (unif01_Gen * gen)
    if (NULL == gen)
       return;
    gen->name = util_Free (gen->name);
+   util_Free (gen->state);
+   util_Free (gen->param);
    util_Free (gen);
    coGB--;
 }
@@ -1267,13 +1306,12 @@ void unif01_DeleteExternGenBits (unif01_Gen * gen)
 static unsigned long (*externGenLong_Bits)(void);
 static int coGBL = 0;                        /* Counter for GBLong_U01 */
 
-static double GBLong_U01 (void *junk1, void *junk2)
+static double GBLong_U01 (void *param, void *state)
 {
    return externGenLong_Bits () / unif01_NORM32;
 }
 
-
-static unsigned long GBLong_Bits (void *junk1, void *junk2)
+static unsigned long GBLong_Bits (void *param, void *state)
 {
    return externGenLong_Bits ();
 }

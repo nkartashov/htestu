@@ -113,8 +113,6 @@ void *util_Realloc (void *ptr, size_t size)
 
 void *util_Free (void *p)
 {
-   if (p == NULL)
-      return NULL;
    free (p);
    return NULL;
 }

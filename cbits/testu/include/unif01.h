@@ -144,8 +144,8 @@ unif01_Gen *unif01_CreateExternGen01 (char *name, double (*gen01)(void));
 
 
 
-unif01_Gen *unif01_CreateExternGenBits (char *name,
-                                        unsigned int (*genB)(void));
+unif01_Gen *unif01_CreateExternGenBits (void (*genB)(const unsigned int,
+                                                     unsigned int*));
 
 
 
