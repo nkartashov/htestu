@@ -3,8 +3,7 @@
 
 module Test.HTestU.BatteryResult
 ( BatteryResultStruct(..)
-)
-  where
+) where
 
 import Foreign.C.Types (CInt(..), CDouble(..))
 import Foreign.Ptr (Ptr, FunPtr, freeHaskellFunPtr)
@@ -12,6 +11,8 @@ import Foreign.Storable
 
 #include "bbattery.h"
 
+-- | Structure holding an array of p-values after performing the testing
+-- and their number
 data BatteryResultStruct = BR {
   pValues :: Ptr CDouble,
   testNumber :: CInt
