@@ -3,8 +3,17 @@
 
 name:                htestu
 version:             0.1.0.0
--- synopsis:            
--- description:         
+synopsis:            A framework to test correctness of pseudo random number generators in Haskell.
+description:         
+  HTestU is a testing framework for testing correctness of presudo random number generators (PRNGs) written in Haskell.
+  HTestU uses a library TestU01 based on a paper "TestU01: A C Library for Empirical Testing of Random Number Generators" by P. L'Ecuyer and R. Simard.
+  Basically HTestU performs a wrapping of a member of the RandomGen typeclass (any reasonable PRNG can be made a member of it) and
+  feeds a wrapped generator into a C library which calls the wrapped generator to fill the buffer with pseudo random numbers and then
+  perform tests on the generated numbers.
+
+  HTestU offers three batteries: smallCrush, crush and bigCrush (as they were specified in TestU01 paper) and a number of
+  streaming functions which allow one to wrap the PRNG differently for the purpose of testing different patterns of PRNG usage.
+
 homepage:            https://github.com/nkartashov/htestu
 license:             MIT
 license-file:        LICENSE
@@ -15,6 +24,10 @@ category:            System
 build-type:          Simple
 -- extra-source-files:  
 cabal-version:       >=1.10
+
+source-repository head
+    type:     git
+    location: git://github.com/nkartashov/htestu
 
 library
   exposed-modules:     Test.HTestU,
