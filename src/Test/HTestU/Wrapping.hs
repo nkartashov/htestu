@@ -11,16 +11,21 @@ module Test.HTestU.Wrapping
 
 import System.Random (RandomGen)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
-import System.IO.Unsafe (unsafePerformIO)
-import Foreign.Ptr (Ptr, FunPtr, freeHaskellFunPtr)
+import Foreign.Ptr (Ptr, FunPtr)
 import Foreign.C.Types (CUInt(..))
 import Foreign.Marshal.Array (pokeArray)
 
 import Test.HTestU.Streaming (RandomStream)
 import Test.HTestU.BatteryResult (BatteryResultStruct(..))
 
+-- | A token type of a C structure of a PRNG, is not used directly
 data UniformGenerator
+
+-- | Result of running a battery - IO action giving the caller a C struct with
+-- resulting p-values describing the results of run tests
 type BatteryResult = IO (Ptr BatteryResultStruct)
+
+-- | Battery takes a wrapped generator and produces p-values as a result of its testing
 type Battery = Ptr UniformGenerator -> BatteryResult
 
 -- | Function which fills the array with numbers

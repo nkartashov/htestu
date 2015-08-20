@@ -6,7 +6,7 @@ module Test.HTestU.BatteryResult
 ) where
 
 import Foreign.C.Types (CInt(..), CDouble(..))
-import Foreign.Ptr (Ptr, FunPtr, freeHaskellFunPtr)
+import Foreign.Ptr (Ptr)
 import Foreign.Storable
 
 #include "bbattery.h"

@@ -7,7 +7,6 @@ module Test.HTestU.Streaming
  ) where
 
 import System.Random (RandomGen, next, split)
-import Data.List (iterate)
 import Data.Tuple (swap)
 
 -- | Synonym for an infinite stream of random numbers
@@ -54,4 +53,6 @@ splitNextStreamFromGen gen = intertwineStreams (nextStreamFromGen leftGen) $ nex
 -- | Returns a new stream of elements in which elements from two given streams
 -- alternate
 intertwineStreams :: [a] -> [a] -> [a]
+intertwineStreams [] ys = ys
+intertwineStreams xs [] = xs
 intertwineStreams (x : xs) (y : ys) = x : y : intertwineStreams xs ys

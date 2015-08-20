@@ -18,7 +18,7 @@ import Foreign.Ptr (freeHaskellFunPtr)
 
 import System.IO.Unsafe (unsafePerformIO)
 
-import Test.HTestU.Wrapping (Battery, WrappedCallback, genToWrappedCallback, c_createGenerator, c_deleteGenerator)
+import Test.HTestU.Wrapping (Battery, genToWrappedCallback, c_createGenerator, c_deleteGenerator)
 import Test.HTestU.BatteryResult (BatteryResultStruct(..))
 import Test.HTestU.Streaming (RandomStream)
 
@@ -26,9 +26,11 @@ import Test.HTestU.Streaming (RandomStream)
 data TestResult = Fail | Suspect | OK deriving (Eq, Show)
 
 -- | P-value serving as a border for a failure in TestU01, greater => failure or suspicious value
+failurePvalue :: Double
 failurePvalue = 0.0000000001 -- 10^(-10)
 
 -- | P-value serving as a border for a suspicious value in TestU01, greater => failure
+suspectPvalue :: Double
 suspectPvalue = 0.001 -- 10^(-3)
 
 -- | Prettifying a p-value to a test result
@@ -52,11 +54,11 @@ runBattery streamer gen crush = unsafePerformIO $ do
   callback <- genToWrappedCallback streamer gen
   generatorPtr <- c_createGenerator callback
   batteryResult <- crush generatorPtr
-  (BR pValues testNumber) <- peek batteryResult
+  (BR ps tests) <- peek batteryResult
   c_deleteGenerator generatorPtr
   freeHaskellFunPtr callback
   free batteryResult
-  cDoublePvalues <- peekArray (fromIntegral testNumber) pValues
+  cDoublePvalues <- peekArray (fromIntegral tests) ps
   return $ map realToFrac cDoublePvalues
 {-# NOINLINE runBattery #-}
 
