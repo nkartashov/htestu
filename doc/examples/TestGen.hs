@@ -1,25 +1,49 @@
-module TestGen where
+{-# OPTIONS_GHC -Wall #-}
 
-import System.Random (RandomGen, next, split)
-import Test.HTestU (runBatteryToResults, c_smallCrush, c_crush)
+module TestGen ( main ) where
+
+import System.Random ( newStdGen )
+import System.Random.TF ( newTFGen )
+import System.Random.SplitMix.Gen ( newSplitMix64 )
+import System.Random.PCG.Fast.Pure (save, create)
+
+import Control.Monad ( join )
+import System.Random ( RandomGen )
+import Test.HTestU (TestResult, runBatteryToResults, c_smallCrush,
+                    c_crush)
 import Test.HTestU.Streaming (nextStreamFromGen)
+import Test.HTestU.Wrapping (Battery)
 
--- | Pretend that this a data type of a PRNG
-data TestGen
+-- Actions for running batteries on a newly generated instance of a PRNG
 
--- | This is an action to generate an instance of a PRNG
-newTestGen :: IO TestGen
-newTestGen = undefined
+runCrush :: (RandomGen g) =>
+             Battery -> IO g -> IO [TestResult]
+runCrush crush gen = (\g -> runBatteryToResults nextStreamFromGen g crush ) `fmap`
+                      gen
 
--- | Dummy instance of 'RandomGen' class
-instance RandomGen TestGen where
-  next = undefined
-  split = undefined
+runSmallCrushStd :: IO [TestResult]
+runSmallCrushStd = runCrush c_smallCrush newStdGen
 
--- | Action for running batteries on a newly generated instance of a PRNG
-runCrush :: Battery -> IO [TestResult]
-runCrush crush = (\g -> runBatteryToResults nextStreamFromGen g crush ) `fmap` newTestGen
+runSmallCrushTF :: IO [TestResult]
+runSmallCrushTF = runCrush c_smallCrush newTFGen
 
--- | Action for running smallCrush on a newly generated instance of a PRNG
-runSmallCrush :: IO [TestResult]
-runSmallCrush = runCrush c_smallCrush
+runSmallCrushSM :: IO [TestResult]
+runSmallCrushSM = runCrush c_smallCrush newSplitMix64
+
+runSmallCrushPCG :: IO [TestResult]
+runSmallCrushPCG = runCrush c_smallCrush (join $ fmap save create)
+
+main :: IO ()
+main = do
+  rStd <- runSmallCrushStd
+  putStrLn "Standard"
+  putStrLn $ show rStd
+  rTF <- runSmallCrushTF
+  putStrLn "TF"
+  putStrLn $ show rTF
+  rSM <- runSmallCrushSM
+  putStrLn "SM"
+  putStrLn $ show rSM
+  rPCG <- runSmallCrushPCG
+  putStrLn "PCG"
+  putStrLn $ show rPCG
