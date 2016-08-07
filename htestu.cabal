@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                htestu
-version:             0.1.0.0
+version:             0.1.1.0
 synopsis:            A library for testing correctness of pseudo random number generators in Haskell.
 description:
   HTestU is a library for testing correctness of presudo random number generators (PRNGs) written in Haskell.
