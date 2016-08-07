@@ -1,13 +1,13 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module TestGen ( main ) where
+module Main ( main ) where
 
-import System.Random ( newStdGen, next, randoms )
+import System.Random ( newStdGen, next )
 import System.Random.TF ( newTFGen )
 -- import qualified System.Random.PCG.Fast.Pure as PCG
 import qualified System.Random.MWC as MWC
-import System.Random.Mersenne.Pure64 ( newPureMT, pureMT )
-import Control.Monad ( join )
+import System.Random.Mersenne.Pure64 ( newPureMT )
+-- import Control.Monad ( join )
 import System.Random ( RandomGen )
 import Test.HTestU (TestResult, runBatteryToResults, c_smallCrush)
 import Test.HTestU.Streaming (nextStreamFromGen)
@@ -32,12 +32,6 @@ runSmallCrushTF = runCrush c_smallCrush newTFGen
 
 -- runSmallCrushPCG :: IO [TestResult]
 -- runSmallCrushPCG = runCrush c_smallCrush (join $ fmap PCG.save PCG.create)
-
-instance RandomGen MWC.Seed where
-  next s = unsafeDupablePerformIO $
-        do g <- MWC.restore s
-           v <- MWC.uniform g
-           return (v, s)
 
 data MWCRNG = MWCRNG (MWC.Gen (PrimState IO))
 
